@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   User,
@@ -196,13 +196,42 @@ function ProfileTab() {
   );
 }
 
+interface ApiKeyEntry {
+  id: string;
+  name: string;
+  key: string;
+  created: string;
+}
+
+const STORAGE_KEY = "lumen_api_keys";
+
+const DEFAULT_KEYS: ApiKeyEntry[] = [
+  { id: "1", name: "Production", key: "sk-ant-api03-xKj9mNpQrSt", created: "Apr 3, 2025" },
+  { id: "2", name: "Development", key: "sk-ant-api03-aB7cDeF2gHi", created: "May 1, 2025" },
+];
+
 function ApiKeysTab() {
-  const [keys] = useState([
-    { id: "1", name: "Production", key: "sk-ant-api03-xKj9mNpQrSt", created: "Apr 3, 2025" },
-    { id: "2", name: "Development", key: "sk-ant-api03-aB7cDeF2gHi", created: "May 1, 2025" },
-  ]);
+  const [keys, setKeys] = useState<ApiKeyEntry[]>([]);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newKey, setNewKey] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      setKeys(stored ? (JSON.parse(stored) as ApiKeyEntry[]) : DEFAULT_KEYS);
+    } catch {
+      setKeys(DEFAULT_KEYS);
+    }
+  }, []);
+
+  const persist = (updated: ApiKeyEntry[]) => {
+    setKeys(updated);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  };
 
   const toggleReveal = (id: string) =>
     setRevealed((prev) => {
@@ -215,6 +244,36 @@ function ApiKeysTab() {
     navigator.clipboard.writeText(key).catch(() => {});
     setCopied(id);
     setTimeout(() => setCopied(null), 1500);
+  };
+
+  const handleAdd = () => {
+    const name = newName.trim();
+    const key = newKey.trim();
+    if (!name || !key) return;
+    const entry: ApiKeyEntry = {
+      id: Date.now().toString(),
+      name,
+      key,
+      created: new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+    };
+    persist([...keys, entry]);
+    setNewName("");
+    setNewKey("");
+    setAdding(false);
+  };
+
+  const handleDelete = (id: string) => {
+    if (deleteConfirm === id) {
+      persist(keys.filter((k) => k.id !== id));
+      setDeleteConfirm(null);
+    } else {
+      setDeleteConfirm(id);
+      setTimeout(() => setDeleteConfirm(null), 3000);
+    }
   };
 
   const maskKey = (key: string) =>
@@ -257,8 +316,14 @@ function ApiKeysTab() {
                 )}
               </button>
               <button
-                title="Delete key"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-[6px] text-text-tertiary transition-colors hover:bg-bg-sunken hover:text-lumen-error"
+                onClick={() => handleDelete(k.id)}
+                title={deleteConfirm === k.id ? "Click again to confirm" : "Delete key"}
+                className={cn(
+                  "inline-flex h-8 w-8 items-center justify-center rounded-[6px] transition-colors",
+                  deleteConfirm === k.id
+                    ? "bg-lumen-error text-white"
+                    : "text-text-tertiary hover:bg-bg-sunken hover:text-lumen-error"
+                )}
               >
                 <Trash2 size={13} />
               </button>
@@ -267,10 +332,67 @@ function ApiKeysTab() {
         ))}
       </div>
 
-      <button className="inline-flex h-9 items-center gap-1.5 rounded-[8px] border border-border-subtle px-4 text-sm text-text-secondary transition-colors hover:bg-bg-sunken hover:text-text-primary">
-        <Plus size={13} />
-        New API key
-      </button>
+      {/* Add new key form */}
+      {adding ? (
+        <div className="rounded-[10px] border border-lumen-accent bg-bg-raised p-4 space-y-3">
+          <p className="text-sm font-medium text-text-primary">New API key</p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-text-tertiary">
+                Name
+              </label>
+              <input
+                autoFocus
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="e.g. Production"
+                className={fieldCls}
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-text-tertiary">
+                API key
+              </label>
+              <input
+                value={newKey}
+                onChange={(e) => setNewKey(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+                placeholder="sk-ant-api03-…"
+                className={cn(fieldCls, "font-mono")}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => { setAdding(false); setNewName(""); setNewKey(""); }}
+              className="inline-flex h-9 items-center rounded-[8px] px-4 text-sm text-text-secondary transition-colors hover:bg-bg-sunken hover:text-text-primary"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleAdd}
+              disabled={!newName.trim() || !newKey.trim()}
+              className={cn(
+                "inline-flex h-9 items-center gap-1.5 rounded-[8px] px-4 text-sm font-medium transition-all",
+                newName.trim() && newKey.trim()
+                  ? "bg-lumen-accent text-lumen-accent-fg hover:opacity-90"
+                  : "cursor-not-allowed bg-bg-sunken text-text-tertiary"
+              )}
+            >
+              <Plus size={13} />
+              Add key
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setAdding(true)}
+          className="inline-flex h-9 items-center gap-1.5 rounded-[8px] border border-border-subtle px-4 text-sm text-text-secondary transition-colors hover:bg-bg-sunken hover:text-text-primary"
+        >
+          <Plus size={13} />
+          New API key
+        </button>
+      )}
 
       <div className="rounded-[10px] border border-border-subtle bg-bg-sunken p-4">
         <p className="text-xs font-medium text-text-secondary">
