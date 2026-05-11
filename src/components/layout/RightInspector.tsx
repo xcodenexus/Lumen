@@ -170,7 +170,7 @@ function AgentTab({ agent }: { agent?: Agent }) {
             {agent.tools.map((tool) => (
               <div
                 key={tool}
-                className="flex items-center justify-between rounded-[6px] border border-border-subtle bg-bg-raised px-3 py-2"
+                className="flex items-center justify-between overflow-hidden rounded-[6px] border border-border-subtle bg-bg-raised px-3 py-2"
               >
                 <span className="font-mono text-sm text-text-primary">
                   {tool}
@@ -203,14 +203,14 @@ function Toggle({
       aria-checked={checked}
       onClick={onChange}
       className={cn(
-        "relative h-5 w-9 flex-shrink-0 rounded-full transition-colors",
+        "relative h-5 w-9 flex-shrink-0 cursor-pointer overflow-hidden rounded-full transition-colors duration-200",
         checked ? "bg-lumen-accent" : "border border-border-strong bg-bg-sunken"
       )}
     >
       <span
         className={cn(
-          "absolute top-0.5 h-4 w-4 rounded-full bg-bg-raised shadow-sm transition-transform",
-          checked ? "translate-x-4" : "translate-x-0.5"
+          "absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200",
+          checked ? "translate-x-[18px]" : "translate-x-0"
         )}
       />
     </button>
