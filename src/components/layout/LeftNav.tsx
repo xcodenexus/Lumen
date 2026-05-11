@@ -14,8 +14,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { mockConversationList } from "@/lib/sample-conversations";
 import { agents } from "@/lib/agents";
+import { useConversations } from "@/hooks/useConversations";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 import { cn } from "@/lib/utils";
@@ -27,15 +27,16 @@ export function LeftNav() {
   const router = useRouter();
   const [agentsExpanded, setAgentsExpanded] = useState(true);
   const [collapsed, setCollapsed] = useState(false);
+  const { conversations } = useConversations();
 
   useKeyboardShortcut("n", () => router.push("/chat"), { meta: true });
 
   const openPalette = () =>
     window.dispatchEvent(new Event("lumen:open-palette"));
 
-  const grouped = groupOrder.reduce<Record<string, typeof mockConversationList>>(
+  const grouped = groupOrder.reduce<Record<string, typeof conversations>>(
     (acc, g) => {
-      acc[g] = mockConversationList.filter((c) => c.group === g);
+      acc[g] = conversations.filter((c) => c.group === g);
       return acc;
     },
     {}
@@ -114,7 +115,7 @@ export function LeftNav() {
         {collapsed ? (
           /* Collapsed: icon-only list */
           <div className="flex flex-col items-center gap-0.5 px-1">
-            {mockConversationList.map((convo) => {
+            {conversations.map((convo) => {
               const isActive = pathname === `/chat/${convo.id}`;
               return (
                 <Link

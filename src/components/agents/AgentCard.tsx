@@ -21,7 +21,7 @@ interface AgentCardProps {
 export function AgentCard({ agent }: AgentCardProps) {
   return (
     <Link
-      href={`/chat?agent=${agent.id}`}
+      href={`/agents/${agent.id}`}
       className={cn(
         "group flex flex-col gap-4 rounded-[12px] border border-border-subtle bg-bg-raised p-5",
         "transition-all duration-150 hover:-translate-y-0.5 hover:border-border-strong"

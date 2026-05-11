@@ -1,3 +1,11 @@
+export interface ConversationListItem {
+  id: string;
+  title: string;
+  agentId: string;
+  updatedAt: string;
+  group: string;
+}
+
 export interface ToolCall {
   id: string;
   tool: string;
