@@ -1,26 +1,260 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:is(.dark *));
+
+/* ─── Tailwind theme: static values ─────────────────────────────── */
+@theme {
+  /* Font families */
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-newsreader), Georgia, serif;
+
+  /* Lumen type scale */
+  --text-xs: 11px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 18px;
+  --text-base: 14px;
+  --text-base--line-height: 22px;
+  --text-md: 15px;
+  --text-md--line-height: 26px;
+  --text-lg: 17px;
+  --text-lg--line-height: 26px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 28px;
+  --text-2xl--line-height: 34px;
 }
 
+/* ─── Tailwind theme: dark-mode-aware colors (CSS vars) ──────────── */
 @theme inline {
+  /* shadcn semantic mappings — keep for component compat */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Radius scale */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
+  --radius-2xl: calc(var(--radius) * 3);
+
+  /* Lumen surface tokens */
+  --color-bg-base: var(--bg-base);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-sunken: var(--bg-sunken);
+
+  /* Lumen border tokens */
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
+  /* Lumen text tokens */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+
+  /* Lumen brand tokens */
+  --color-lumen-accent: var(--lumen-accent);
+  --color-lumen-accent-soft: var(--lumen-accent-soft);
+  --color-lumen-accent-fg: var(--lumen-accent-fg);
+
+  /* Lumen status tokens */
+  --color-lumen-success: var(--lumen-success);
+  --color-lumen-warn: var(--lumen-warn);
+  --color-lumen-error: var(--lumen-error);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Light mode ─────────────────────────────────────────────────── */
+:root {
+  /* shadcn variables — overridden with Lumen warm palette */
+  --background: hsl(48, 33%, 97%);
+  --foreground: hsl(45, 9%, 9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(45, 9%, 9%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(45, 9%, 9%);
+  --primary: hsl(18, 84%, 41%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(45, 17%, 93%);
+  --secondary-foreground: hsl(45, 9%, 9%);
+  --muted: hsl(45, 17%, 93%);
+  --muted-foreground: hsl(42, 7%, 33%);
+  --accent: hsl(32, 97%, 83%);
+  --accent-foreground: hsl(45, 9%, 9%);
+  --destructive: hsl(0, 70%, 35%);
+  --border: hsl(45, 19%, 89%);
+  --input: hsl(45, 19%, 89%);
+  --ring: hsl(18, 84%, 41%);
+  --radius: 0.5rem;
+
+  /* Lumen design tokens */
+  --bg-base: hsl(48, 33%, 97%);
+  --bg-raised: hsl(0, 0%, 100%);
+  --bg-sunken: hsl(45, 17%, 93%);
+  --border-subtle: hsl(45, 19%, 89%);
+  --border-strong: hsl(45, 13%, 80%);
+  --text-primary: hsl(45, 9%, 9%);
+  --text-secondary: hsl(42, 7%, 33%);
+  --text-tertiary: hsl(45, 8%, 51%);
+  --lumen-accent: hsl(18, 84%, 41%);
+  --lumen-accent-soft: hsl(32, 97%, 83%);
+  --lumen-accent-fg: hsl(0, 0%, 100%);
+  --lumen-success: hsl(142, 53%, 24%);
+  --lumen-warn: hsl(35, 92%, 33%);
+  --lumen-error: hsl(0, 70%, 35%);
+  --shadow-focus: 0 0 0 3px hsl(18 84% 41% / 0.12);
+  --shadow-overlay: 0 20px 50px -20px hsl(45 9% 9% / 0.25);
+}
+
+/* ─── Dark mode ──────────────────────────────────────────────────── */
+.dark {
+  --background: hsl(45, 9%, 7%);
+  --foreground: hsl(45, 27%, 95%);
+  --card: hsl(42, 9%, 10%);
+  --card-foreground: hsl(45, 27%, 95%);
+  --popover: hsl(42, 9%, 10%);
+  --popover-foreground: hsl(45, 27%, 95%);
+  --primary: hsl(25, 95%, 61%);
+  --primary-foreground: hsl(45, 9%, 7%);
+  --secondary: hsl(45, 13%, 5%);
+  --secondary-foreground: hsl(45, 27%, 95%);
+  --muted: hsl(45, 13%, 5%);
+  --muted-foreground: hsl(42, 11%, 62%);
+  --accent: hsl(18, 84%, 15%);
+  --accent-foreground: hsl(45, 27%, 95%);
+  --destructive: hsl(0, 70%, 55%);
+  --border: hsl(42, 9%, 15%);
+  --input: hsl(42, 9%, 15%);
+  --ring: hsl(25, 95%, 61%);
+
+  --bg-base: hsl(45, 9%, 7%);
+  --bg-raised: hsl(42, 9%, 10%);
+  --bg-sunken: hsl(45, 13%, 5%);
+  --border-subtle: hsl(42, 9%, 15%);
+  --border-strong: hsl(40, 8%, 21%);
+  --text-primary: hsl(45, 27%, 95%);
+  --text-secondary: hsl(42, 11%, 62%);
+  --text-tertiary: hsl(42, 9%, 38%);
+  --lumen-accent: hsl(25, 95%, 61%);
+  --lumen-accent-soft: hsl(18, 84%, 15%);
+  --lumen-accent-fg: hsl(45, 9%, 7%);
+  --lumen-success: hsl(142, 53%, 44%);
+  --lumen-warn: hsl(35, 92%, 53%);
+  --lumen-error: hsl(0, 70%, 55%);
+  --shadow-focus: 0 0 0 3px hsl(25 95% 61% / 0.2);
+  --shadow-overlay: 0 20px 50px -20px hsl(0 0% 0% / 0.6);
+}
+
+/* ─── Shiki dual-theme syntax highlighting ───────────────────────── */
+.shiki-wrap .shiki {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.shiki-wrap .shiki code {
+  font-family: inherit;
+}
+.shiki-wrap .shiki span {
+  color: var(--shiki-light, currentColor) !important;
+  font-style: var(--shiki-light-font-style, inherit) !important;
+  font-weight: var(--shiki-light-font-weight, inherit) !important;
+  text-decoration: var(--shiki-light-text-decoration, none) !important;
+}
+.dark .shiki-wrap .shiki span {
+  color: var(--shiki-dark, currentColor) !important;
+  font-style: var(--shiki-dark-font-style, inherit) !important;
+  font-weight: var(--shiki-dark-font-weight, inherit) !important;
+  text-decoration: var(--shiki-dark-text-decoration, none) !important;
+}
+
+/* ─── Streaming cursor ───────────────────────────────────────────── */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.streaming-cursor {
+  animation: cursor-blink 0.9s ease-in-out infinite;
+}
+
+/* ─── Base styles ────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply h-full;
+  }
+
+  body {
+    @apply min-h-full bg-bg-base text-text-primary antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    letter-spacing: -0.01em;
+  }
+
+  .font-serif {
+    font-family: var(--font-serif);
+    font-feature-settings: "ss01";
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .font-display {
+    letter-spacing: -0.015em;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Temperature range slider ───────────────────────────────────── */
+.temperature-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-sunken);
+  outline: none;
+}
+.temperature-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 2px solid var(--lumen-accent);
+  cursor: pointer;
+  box-shadow: 0 1px 3px hsl(0 0% 0% / 0.15);
+  transition: transform 0.1s ease;
+}
+.temperature-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+.temperature-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 2px solid var(--lumen-accent);
+  cursor: pointer;
+  box-shadow: 0 1px 3px hsl(0 0% 0% / 0.15);
 }
