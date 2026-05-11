@@ -1,7 +1,8 @@
 "use client";
 
-import { ChevronDown, Share2, MoreHorizontal, PanelRight } from "lucide-react";
+import { ChevronDown, Share2, MoreHorizontal, PanelRight, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import type { Agent } from "@/lib/agents";
 
 interface TopBarProps {
@@ -11,6 +12,23 @@ interface TopBarProps {
 }
 
 export function TopBar({ agent, inspectorOpen, onToggleInspector }: TopBarProps) {
+  const [copied, setCopied] = useState(false);
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: agent?.name ?? "Lumen chat", url });
+      } catch {
+        // user cancelled — no-op
+      }
+      return;
+    }
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <header className="flex h-14 flex-shrink-0 items-center justify-between border-b border-border-subtle bg-bg-raised px-6">
       {/* Left: agent selector */}
@@ -33,9 +51,17 @@ export function TopBar({ agent, inspectorOpen, onToggleInspector }: TopBarProps)
 
       {/* Right: actions */}
       <div className="flex items-center gap-1">
-        <button className="inline-flex h-8 items-center gap-1.5 rounded-[6px] px-3 text-sm text-text-secondary transition-colors hover:bg-bg-sunken hover:text-text-primary">
-          <Share2 size={14} />
-          Share
+        <button
+          onClick={handleShare}
+          className={cn(
+            "inline-flex h-8 items-center gap-1.5 rounded-[6px] px-3 text-sm transition-colors",
+            copied
+              ? "bg-lumen-accent-soft text-lumen-accent"
+              : "text-text-secondary hover:bg-bg-sunken hover:text-text-primary"
+          )}
+        >
+          {copied ? <Check size={14} /> : <Share2 size={14} />}
+          {copied ? "Copied!" : "Share"}
         </button>
         <button className="inline-flex h-8 w-8 items-center justify-center rounded-[6px] text-text-tertiary transition-colors hover:bg-bg-sunken hover:text-text-secondary">
           <MoreHorizontal size={16} />
