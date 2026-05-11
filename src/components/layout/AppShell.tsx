@@ -13,11 +13,15 @@ interface AppShellProps {
 }
 
 export function AppShell({ children, agent }: AppShellProps) {
-  const [inspectorOpen, setInspectorOpen] = useState(true);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden bg-bg-base">
-      <LeftNav />
+      <LeftNav
+        mobileOpen={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+      />
 
       {/* Middle column */}
       <div className="flex min-w-0 flex-1 flex-col">
@@ -25,11 +29,15 @@ export function AppShell({ children, agent }: AppShellProps) {
           agent={agent}
           inspectorOpen={inspectorOpen}
           onToggleInspector={() => setInspectorOpen((v) => !v)}
+          onOpenMobileNav={() => setMobileNavOpen(true)}
         />
         {children}
       </div>
 
-      <RightInspector open={inspectorOpen} agent={agent} />
+      {/* Inspector is desktop-only — hidden below md breakpoint */}
+      <div className="hidden md:contents">
+        <RightInspector open={inspectorOpen} agent={agent} />
+      </div>
       <CommandPalette />
     </div>
   );

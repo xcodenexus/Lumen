@@ -13,7 +13,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ onPromptSelect }: EmptyStateProps) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-8">
+    <div className="flex flex-1 flex-col items-center justify-center px-4 md:px-8">
       {/* Logo mark */}
       <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-lumen-accent-soft">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
@@ -28,12 +28,12 @@ export function EmptyState({ onPromptSelect }: EmptyStateProps) {
       </h1>
 
       {/* Prompt cards 2×2 */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid w-full max-w-[420px] grid-cols-2 gap-3">
         {PROMPT_CARDS.map(({ icon, category, prompt }) => (
           <button
             key={prompt}
             onClick={() => onPromptSelect?.(prompt)}
-            className="group flex h-[100px] w-[200px] flex-col justify-between rounded-[12px] border border-border-subtle bg-bg-raised p-4 text-left transition-all hover:-translate-y-0.5 hover:border-border-strong"
+            className="group flex h-[100px] w-full flex-col justify-between rounded-[12px] border border-border-subtle bg-bg-raised p-4 text-left transition-all hover:-translate-y-0.5 hover:border-border-strong"
           >
             <div className="flex items-center gap-2">
               <span className="text-[20px] leading-none">{icon}</span>

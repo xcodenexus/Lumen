@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Plus,
@@ -22,7 +22,12 @@ import { cn } from "@/lib/utils";
 
 const groupOrder = ["Today", "Yesterday", "Last 7 days"];
 
-export function LeftNav() {
+interface LeftNavProps {
+  mobileOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function LeftNav({ mobileOpen = false, onClose = () => {} }: LeftNavProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [agentsExpanded, setAgentsExpanded] = useState(true);
@@ -30,6 +35,12 @@ export function LeftNav() {
   const { conversations } = useConversations();
 
   useKeyboardShortcut("n", () => router.push("/chat"), { meta: true });
+
+  // Close mobile drawer on navigation
+  useEffect(() => {
+    onClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const openPalette = () =>
     window.dispatchEvent(new Event("lumen:open-palette"));
@@ -43,10 +54,24 @@ export function LeftNav() {
   );
 
   return (
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={onClose}
+        />
+      )}
     <motion.aside
       animate={{ width: collapsed ? 56 : 240 }}
       transition={{ type: "spring", stiffness: 350, damping: 35 }}
-      className="flex h-full flex-col border-r border-border-subtle bg-bg-raised overflow-hidden flex-shrink-0"
+      className={cn(
+        "flex h-full flex-col border-r border-border-subtle bg-bg-raised overflow-hidden flex-shrink-0",
+        // Mobile: fixed overlay drawer
+        "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-50 max-md:shadow-xl max-md:!w-[280px]",
+        "max-md:transition-transform max-md:duration-300 max-md:ease-in-out",
+        !mobileOpen && "max-md:-translate-x-full"
+      )}
     >
       {/* Logo + collapse toggle */}
       <div className="flex h-14 flex-shrink-0 items-center justify-between border-b border-border-subtle px-3">
@@ -273,5 +298,6 @@ export function LeftNav() {
         )}
       </div>
     </motion.aside>
+    </>
   );
 }

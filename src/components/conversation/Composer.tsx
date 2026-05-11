@@ -43,7 +43,7 @@ export function Composer({ onSubmit, defaultValue = "", isLoading }: ComposerPro
   const canSubmit = value.trim().length > 0 && !isLoading;
 
   return (
-    <div className="flex-shrink-0 px-6 pb-4 pt-2">
+    <div className="flex-shrink-0 px-3 pb-4 pt-2 md:px-6">
       <div className="mx-auto max-w-[720px]">
         <div
           className={cn(
